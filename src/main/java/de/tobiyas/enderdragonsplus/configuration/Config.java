@@ -43,6 +43,8 @@ public class Config
   //Riding
   private boolean config_useSoftRidingCollision;
   private int config_maxRidingSpeed;
+  private String config_fireItem1;//Jeppa
+  private String config_fireItem2;//Jeppa
   
   //World damage
   private boolean config_disableEnderdragonBlockDamage;
@@ -190,6 +192,8 @@ public class Config
     
     this.config_useSoftRidingCollision = this.plugin.getConfig().getBoolean("useSoftRidingCollision", true);
     this.config_maxRidingSpeed = this.plugin.getConfig().getInt("maxRidingSpeed", 4);
+    this.config_fireItem1 = this.plugin.getConfig().getString("config_fireItem1", "ENDER_PEARL");	//Jeppa
+    this.config_fireItem2 = this.plugin.getConfig().getString("config_fireItem2", "FIREBALL");		//Jeppa
 
     this.config_disableDragonHealthBar = this.plugin.getConfig().getBoolean("disableDragonHealthBar", false);
 
@@ -424,6 +428,14 @@ public class Config
 		return config_maxRidingSpeed;
 	}
 	
+	public String config_fireItem1() {//Jeppa
+		return config_fireItem1;
+	}
+	
+	public String config_fireItem2() {//Jeppa
+		return config_fireItem2;
+	}
+		
 	public List<WorldMesh> getConfig_worldMeshes() {
 		return config_worldMeshes;
 	}

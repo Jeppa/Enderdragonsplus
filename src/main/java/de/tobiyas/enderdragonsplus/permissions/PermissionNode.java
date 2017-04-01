@@ -24,7 +24,8 @@ public class PermissionNode {
 	//RidingPermissions
 	public final static String ride = pluginPre + "riding.ride";
 	public final static String shootFireballs = pluginPre + "riding.fireball";
-
+	public final static String shootFirebreath = pluginPre + "riding.firebreath";
+	
 	//Targeting Permissions
 	public final static String getIgnored = pluginPre + "targeting.ignore";
 

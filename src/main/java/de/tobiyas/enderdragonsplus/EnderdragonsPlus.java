@@ -3,6 +3,10 @@
  * http://
  *
  * powered by Kickstarter
+ * 
+ * Updated for 1.11 by Jeppa
+ * Firebreath and -spread fixed/redone by Jeppa
+ * Riding the dragon fixed by Jeppa, too.
  */
 
 package de.tobiyas.enderdragonsplus;
@@ -15,9 +19,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 import de.tobiyas.enderdragonsplus.bridges.BridgeController;
 import de.tobiyas.enderdragonsplus.commands.CommandEDP;
+import de.tobiyas.enderdragonsplus.commands.CommandFireBreath; 
 import de.tobiyas.enderdragonsplus.commands.CommandFlyTo;
 import de.tobiyas.enderdragonsplus.commands.CommandGoHome;
 import de.tobiyas.enderdragonsplus.commands.CommandInfo;
@@ -46,7 +52,8 @@ import de.tobiyas.enderdragonsplus.listeners.Listener_World;
 import de.tobiyas.enderdragonsplus.meshing.MeshManager;
 import de.tobiyas.enderdragonsplus.spawner.DragonSpawnerManager;
 import de.tobiyas.util.UtilsUsingPlugin;
-import de.tobiyas.util.metrics.SendMetrics;
+import de.tobiyas.util.metrics.SendMetrics; 
+
 
 
 public class EnderdragonsPlus extends UtilsUsingPlugin{
@@ -74,6 +81,8 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 	public void pluginEnable(){
 		plugin = this;
 		
+		checkDepends(); //Jeppa: VOR Inject...wegen DragonTravel
+		
 		if(!tryInjectDragon()) {
 			log("Could not inject Dragon. Disabling Plugin.");
 			Bukkit.getScheduler().cancelTasks(this);
@@ -89,14 +98,14 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 		checkAgeContainerSynthax();
 		container = new Container();
 		
-		checkDepends();
+//		checkDepends(); //Jeppa... --> hoch
 		registerEvents();
 		registerCommands();
 		
 		registerTasks();
 		
 		registerManagers();
-		initMetrics();
+		initMetrics(); 
 		
 		log(getDescription().getFullName() + " fully loaded with: " + getPermissionManager().getPermissionsName());
 	}
@@ -121,7 +130,7 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 					|| getRelocationAddition().equalsIgnoreCase("1_9_R2")
 					|| getRelocationAddition().equalsIgnoreCase("1_10_R1")
 					){
-				
+				// Jeppa: seit MC1.11 funktioniert EntityTypes.class anders!!! -> s.u.
 				Field c = entityTypeClass.getDeclaredField("c"); c.setAccessible(true);
 				HashMap c_map = (HashMap) c.get(null);
 				c_map.put(edName, edClass);
@@ -145,6 +154,14 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 				return true;
 			}
 			
+			if(getRelocationAddition().equalsIgnoreCase("1_11_R1")){ //Jeppa: register using DragonTravel or own routine
+				if (plugin.interactBridgeController().isDTActive("DragonTravel")) {
+					eu.phiwa.dragontravel.core.CustomEntityRegistry.registerCustomEntity(edInt, edName, (Class<? extends net.minecraft.server.v1_11_R1.EntityInsentient>) edClass);
+				} else {
+					registerEntity1_11(edName, edInt, (Class<? extends net.minecraft.server.v1_11_R1.EntityInsentient>) edClass); 
+				}
+		        return true;
+			}
 			
 			if(getRelocationAddition().equals("1_6_R1") || getRelocationAddition().equals("1_6_R2")
 					|| getRelocationAddition().equals("1_6_R3")){
@@ -183,6 +200,7 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 	
 	@Override
 	public void onDisable(){
+		
 		try{
 			dragonSpawnerManager.saveList();
 		}catch(Throwable exp){}
@@ -212,7 +230,6 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 		new CommandEDP();
 		new CommandRide();
 		new CommandFlyTo(this);
-		//new CommandFireBreath();
 		//new CommandError();
 		//new CommandDEBUGGOTO();
 	}
@@ -270,6 +287,7 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 		ageContainerManager.reload();
 	}
 	
+	
 	private void initMetrics(){
 		if(interactConfig().getConfig_uploadMetrics())
 			SendMetrics.sendMetrics(this, false);
@@ -277,7 +295,6 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 		boolean enableErrorReport = interactConfig().getConfig_uploadErrors();
 		getDebugLogger().enableUploads(enableErrorReport);
 	}
-
 	
 	public Config interactConfig(){
 		return config;
@@ -298,7 +315,6 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 	public DragonSpawnerManager getDragonSpawnerManager(){
 		return dragonSpawnerManager;
 	}
-
 	
 	public EntityDamageWhisperController getDamageWhisperController(){
 		return damageWhisperController;
@@ -311,7 +327,7 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 	public MeshManager getMeshManager() {
 		return meshManager;
 	}
-
+	
 	/**
 	 * The relocation addition for the classes.
 	 */
@@ -339,5 +355,26 @@ public class EnderdragonsPlus extends UtilsUsingPlugin{
 		
 		return null;
 	}
+	
+	
+	// Jeppa:  new Code,  based on xYourFreindx ... 
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+    public void registerEntity1_11(String name, int id, Class<? extends net.minecraft.server.v1_11_R1.EntityInsentient> customClass) {
+		net.minecraft.server.v1_11_R1.MinecraftKey key = new net.minecraft.server.v1_11_R1.MinecraftKey(name);
+        try {
+            ((net.minecraft.server.v1_11_R1.RegistryMaterials) getPrivateStatic(net.minecraft.server.v1_11_R1.EntityTypes.class, "b")).a(id, key, customClass);
+            ((Set) getPrivateStatic(net.minecraft.server.v1_11_R1.EntityTypes.class, "d")).add(key);
+            ((List) getPrivateStatic(net.minecraft.server.v1_11_R1.EntityTypes.class, "g")).set(id, name);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @SuppressWarnings("rawtypes")
+    private static Object getPrivateStatic(Class clazz, String f) throws Exception {
+        Field field = clazz.getDeclaredField(f);
+        field.setAccessible(true);
+        return field.get(null);
+    }
 
 }

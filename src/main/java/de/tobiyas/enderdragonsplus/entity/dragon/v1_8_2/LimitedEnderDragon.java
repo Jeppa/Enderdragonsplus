@@ -248,9 +248,13 @@ public class LimitedEnderDragon extends EntityEnderDragon implements LimitedED {
 		//TODO add this again.
 		if(dragonHealthController.isInvincible()) return false;
 		
-		dragonHealthController.rememberDamage((LivingEntity)damagesource.getEntity().getBukkitEntity(), damage);
+		try {
+			dragonHealthController.rememberDamage((LivingEntity)damagesource.getEntity().getBukkitEntity(), damage);
+		} catch (Exception e) {
+			
+		}
 		dragonMoveController.restoreOldDataIfPossible();
-		return super.dealDamage(damagesource, damage);
+		return super.dealDamage(damagesource, damage);	
 	}
 	
 

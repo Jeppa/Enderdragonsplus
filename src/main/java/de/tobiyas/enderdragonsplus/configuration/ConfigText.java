@@ -105,6 +105,15 @@ public class ConfigText {
 			+ "#This is the maximal Riding speed that can be passed to /edpRide <speed>\n"
 			+ "#default: 4'\n"
 			+ "maxRidingSpeed: 4\n\n"
+			
+			+ "#This is the item you have to hold for fireing Fireballs\n"
+			+ "#default: ENDER_PEARL\n"
+			+ "fireItem1: ENDER_PEARL\n\n"
+			
+			+ "#This is the item you have to hold for fireing Firebreath\n"
+			+ "#default: FIREBALL\n"
+			+ "fireItem2: FIREBALL\n\n"
+
 			+ "#  /SUBREGION: EnderDragons.Riding\n\n";
 	}
 	

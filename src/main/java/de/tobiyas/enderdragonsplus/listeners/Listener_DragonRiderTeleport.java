@@ -6,6 +6,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import de.tobiyas.enderdragonsplus.EnderdragonsPlus;
@@ -56,5 +57,20 @@ public class Listener_DragonRiderTeleport implements Listener {
 				dragon.setPassenger(player);
 			}
 		}, 0);
+	}
+	
+	
+	//Jeppa: Remove EnderDragon when Player leaves...
+	@EventHandler
+	public void OnPlayerQuit(PlayerQuitEvent event){
+		Player player = event.getPlayer();
+		
+		Entity vehicle = player.getVehicle();
+		if(vehicle != null && vehicle.getType() == EntityType.ENDER_DRAGON){
+			LimitedED dragon = plugin.getContainer().getDragonById(vehicle.getUniqueId());
+			if(dragon != null){
+				dragon.remove();
+			}
+		}
 	}
 }

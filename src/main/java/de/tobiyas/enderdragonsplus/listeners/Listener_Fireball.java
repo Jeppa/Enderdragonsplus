@@ -38,6 +38,9 @@ public class Listener_Fireball implements Listener {
 	@EventHandler
 	public void HandleFireballHit(ExplosionPrimeEvent event){
 		//if(!(event.getEntity() instanceof LimitedFireball_1_7R3)) return; //No fireball -> not interesting for us.
+//JEppa:
+		if(!(event.getEntity().getType() == EntityType.FIREBALL)) return; //Jeppa: f.e. TNT -> not interesting for us. ????????
+//^^
 		Projectile fireball = (Projectile) event.getEntity();
 		if(fireball.getShooter() == null || !(fireball.getShooter() instanceof EnderDragon))
 			return;

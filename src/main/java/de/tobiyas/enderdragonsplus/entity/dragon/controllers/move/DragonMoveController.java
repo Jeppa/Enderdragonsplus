@@ -138,8 +138,9 @@ public class DragonMoveController implements IDragonMoveController {
 	protected void moveToDragonMotion(){
 		
 		boolean useSoftCollison = dragon.getCollisionController().hasCollision() && plugin.interactConfig().isConfig_useSoftRidingCollision();
-		boolean collisionDetected = dragon.getCollisionController().checkCollisionAndPortals();
-		
+		//boolean collisionDetected = dragon.getCollisionController().checkCollisionAndPortals();
+		boolean collisionDetected ;
+
 		Location dragonLoc = dragon.getLocation();
 		Vector motion = dragon.getMotion();
 		
@@ -150,8 +151,9 @@ public class DragonMoveController implements IDragonMoveController {
 	        		(int) Math.floor(dragonLoc.getZ() + motion.getZ())
 	        );
 
-	        collisionDetected = block.getType() != Material.AIR;
-        }
+	        collisionDetected = ((block.getType() != Material.AIR) && (!block.isLiquid())); 
+
+		} else 	collisionDetected = dragon.getCollisionController().checkCollisionAndPortals();//Jeppa: moved here
 		
 		if(collisionDetected){
 			motion = motion.multiply(-1);

@@ -29,7 +29,7 @@ public class CommandFireBreath implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command, String label,
 			String[] arguments) {
 		
-		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.createEnderDragon))
+		if(!plugin.getPermissionManager().checkPermissions(sender, PermissionNode.shootFirebreath)) //Jeppa: own permission!
 			return true;
 		
 		if(!(sender instanceof Player)){

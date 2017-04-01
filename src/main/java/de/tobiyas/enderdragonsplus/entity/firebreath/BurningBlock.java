@@ -1,7 +1,9 @@
 package de.tobiyas.enderdragonsplus.entity.firebreath;
 
+//import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 
 public class BurningBlock {
 
@@ -10,7 +12,6 @@ public class BurningBlock {
 	private boolean done = false;
 	private Material oldMaterial;
 	
-	
 	public BurningBlock(Location location, int ticksToBurn){
 		this.ticksToBurn = ticksToBurn;
 		this.location = location;
@@ -18,13 +19,12 @@ public class BurningBlock {
 	}
 	
 	public void tick(){
-		if(ticksToBurn != 0){
-			location.getBlock().setType(Material.FIRE);
+		Block Block = location.getBlock();
+		if(ticksToBurn > 0){ //Jeppa  !=0 -> >0   
+			if (!(Block.getType().equals(Material.FIRE))) Block.setType(Material.FIRE);
 			ticksToBurn--;
-		}
-		
-		if(ticksToBurn == 0){
-			location.getBlock().setType(oldMaterial);
+		} else { 
+			Block.setType(oldMaterial);
 			done = true;
 		}
 	}
